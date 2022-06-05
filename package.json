@@ -2,11 +2,11 @@
   "name": "url-monitoring",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/main.js",
   "type": "module",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
+    "start": "node src/main.js",
+    "dev": "nodemon src/main.js",
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
     "test": "jest"
@@ -14,12 +14,19 @@
   "author": "alaa-khaled",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
-    "mongoose": "^6.3.5"
+    "http-status": "^1.5.2",
+    "joi": "^17.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
+    "mongoose": "^6.3.5",
+    "nodemailer": "^6.7.5"
   },
   "devDependencies": {
-    "eslint": "^8.15.0",
+    "eslint": "^8.17.0",
+    "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.2.0",
