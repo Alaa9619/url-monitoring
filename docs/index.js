@@ -1,7 +1,7 @@
-import { userDocs } from './user/index.js'
+import { usersDocs } from './user/index.js'
 
 export const modulesDocs = {
 
-  ...userDocs
+  ...usersDocs
 
 }
