@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { PENDING, VERIFIED } from './constants.js'
+import { EMAIL_REGEX, PENDING, VERIFIED } from './constants.js'
 
 const UserSchema = new mongoose.Schema({
   username: {
@@ -11,7 +11,8 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    trim: true
+    trim: true,
+    match: EMAIL_REGEX
   },
 
   password: { type: String, minlength: 8, required: true },
