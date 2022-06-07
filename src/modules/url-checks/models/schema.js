@@ -21,7 +21,6 @@ const urlCheckSchema = new mongoose.Schema({
   url: {
     type: String,
     required: true,
-    unique: true,
     trim: true,
     match: URL_REGEX
   },
