@@ -1,5 +1,6 @@
 
 import mongoose from 'mongoose'
+import { PROTOCOLS } from '../constants.js'
 import { URL_REGEX } from './constants.js'
 
 const tagSchema = new mongoose.Schema({ name: String })
@@ -62,7 +63,7 @@ const urlCheckSchema = new mongoose.Schema({
   },
 
   httpHeaders: {
-    type: mongoose.Schema.Types.Mixed
+    type: [mongoose.Schema.Types.Mixed]
   },
 
   tags: {
@@ -72,6 +73,12 @@ const urlCheckSchema = new mongoose.Schema({
 
   ignoreSSL: {
     type: Boolean,
+    required: true
+  },
+
+  protocol: {
+    type: String,
+    enum: [PROTOCOLS],
     required: true
   }
 
