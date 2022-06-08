@@ -44,9 +44,7 @@ export const userServices = {
  * @returns {Promise}
  */
   verifyEmail: async ({ verificationToken }) => {
-    console.log(verificationToken)
     const tokenExists = await Users.exists({ verificationToken })
-    console.log(tokenExists)
     if (!tokenExists) {
       throw new APIError({ status: NOT_FOUND, message: 'This user doesn\'t exist you may sign up' })
     }

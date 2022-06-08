@@ -16,7 +16,6 @@ export const userController = {
   },
 
   verifyEmail: async (req, res, next) => {
-    console.log(req.query)
     const { query: { verificationToken } } = req
     try {
       await userServices.verifyEmail({ verificationToken })
@@ -28,7 +27,6 @@ export const userController = {
   },
 
   login: async (req, res, next) => {
-    console.log(req.query)
     const { body: { username, email, password } } = req
     try {
       const token = await userServices.login({ username, email, password })
