@@ -19,9 +19,9 @@ export const urlChecksValidation = {
         password: Joi.string().min(8)
       }),
       httpHeaders: Joi.array(),
-      assert: Joi.object({
+      assert: {
         statusCode: Joi.number().min(100).max(599) // range of the status code
-      }),
+      },
       tags: Joi.array().items(Joi.string()),
       ignoreSSL: Joi.boolean().required()
 
