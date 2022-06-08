@@ -3,8 +3,6 @@ import mongoose from 'mongoose'
 import { PROTOCOLS } from '../constants.js'
 import { URL_REGEX } from './constants.js'
 
-const tagSchema = new mongoose.Schema({ name: String })
-
 const urlCheckSchema = new mongoose.Schema({
 
   userId: {
@@ -66,7 +64,7 @@ const urlCheckSchema = new mongoose.Schema({
   },
 
   tags: {
-    type: [tagSchema]
+    type: [String]
 
   },
 
@@ -77,7 +75,7 @@ const urlCheckSchema = new mongoose.Schema({
 
   protocol: {
     type: String,
-    enum: [PROTOCOLS],
+    enum: [...PROTOCOLS],
     required: true
   }
 
