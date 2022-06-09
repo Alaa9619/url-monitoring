@@ -1,9 +1,10 @@
 import mongoose from 'mongoose'
-import { createFakeAuthenticatedUser } from '../../fakers/user-fakers.js'
+import { createFakeAuthenticatedUser } from '../../fakers/user.js'
 import request from 'supertest'
-import { CREATED } from 'http-status'
+import { CREATED, NOT_FOUND, NO_CONTENT, OK, UNAUTHORIZED } from 'http-status'
 import app from '../../../app.js'
 import { HTTPS_PROTOCOL } from '../constants.js'
+import { createFakeUrlChecksInstance } from '../../fakers/url-checks.js'
 
 describe('[INTEGRATION] Url Checks Endpoints', () => {
   let user
@@ -24,7 +25,8 @@ describe('[INTEGRATION] Url Checks Endpoints', () => {
     await mongoose.disconnect()
   })
 
-  describe('POST /url-checks', () => {
+  // TODO add function to validate the schema
+  describe('POST /url-checks/', () => {
     test('It creates url check successfully', async () => {
       const createUrlChecksInstanceBody =
       {
@@ -52,6 +54,87 @@ describe('[INTEGRATION] Url Checks Endpoints', () => {
         .send(createUrlChecksInstanceBody)
 
       expect(res.status).toBe(CREATED)
+    })
+  })
+
+  describe('GET /url-checks/:id', () => {
+    test('It gets url checks successfully', async () => {
+      const urlCheckInstance = await createFakeUrlChecksInstance({ userId: user._id })
+
+      const res = await request(app)
+        .get(`/url-checks/${urlCheckInstance._id}`)
+        .set('Authorization', `JWT ${user.verificationToken}`)
+
+      expect(res.status).toBe(OK)
+    })
+
+    test('It fails to get url checks as the id is not found', async () => {
+      const res = await request(app)
+        .get(`/url-checks/${mongoose.Types.ObjectId()}`)
+        .set('Authorization', `JWT ${user.verificationToken}`)
+
+      expect(res.status).toBe(NOT_FOUND)
+    })
+
+    test('It fails if the user does not own this url', async () => {
+      const anotherUser = await createFakeAuthenticatedUser({ email: 'anotherCoolMan987@gmail.com' })
+
+      const urlCheckInstance = await createFakeUrlChecksInstance({ userId: user._id })
+
+      const res = await request(app)
+        .get(`/url-checks/${urlCheckInstance._id}`)
+        .set('Authorization', `JWT ${anotherUser.verificationToken}`)
+
+      expect(res.status).toBe(UNAUTHORIZED)
+    })
+  })
+
+  describe('DELETE /url-checks/:id', () => {
+    test('It deletes url checks successfully', async () => {
+      const urlCheckInstance = await createFakeUrlChecksInstance({ userId: user._id })
+
+      const res = await request(app)
+        .delete(`/url-checks/${urlCheckInstance._id}`)
+        .set('Authorization', `JWT ${user.verificationToken}`)
+
+      expect(res.status).toBe(NO_CONTENT)
+    })
+
+    test('It fails to delete url checks as the id is not found', async () => {
+      const res = await request(app)
+        .get(`/url-checks/${mongoose.Types.ObjectId()}`)
+        .set('Authorization', `JWT ${user.verificationToken}`)
+
+      expect(res.status).toBe(NOT_FOUND)
+    })
+
+    test('It fails if the user does not own this url', async () => {
+      const anotherUser = await createFakeAuthenticatedUser({ email: 'anotherCoolMan7@gmail.com' })
+
+      const urlCheckInstance = await createFakeUrlChecksInstance({ userId: user._id })
+
+      const res = await request(app)
+        .get(`/url-checks/${urlCheckInstance._id}`)
+        .set('Authorization', `JWT ${anotherUser.verificationToken}`)
+
+      expect(res.status).toBe(UNAUTHORIZED)
+    })
+  })
+
+  describe('GET /url-checks/', () => {
+    test('It gets a bulk of urls checks successfully', async () => {
+      const tags = ['science', 'fiction']
+      const firstUrlCheckInstance = await createFakeUrlChecksInstance({ userId: user._id, tags })
+      const secondUrlCheckInstance = await createFakeUrlChecksInstance({ userId: user._id, tags })
+      console.log(firstUrlCheckInstance)
+      console.log(secondUrlCheckInstance)
+      const res = await request(app)
+        .get('/url-checks/')
+        .query({ tags })
+        .set('Authorization', `JWT ${user.verificationToken}`)
+
+      expect(res.status).toBe(OK)
+      expect(res.body.length).toBe(2)
     })
   })
 })
