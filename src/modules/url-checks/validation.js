@@ -26,6 +26,23 @@ export const urlChecksValidation = {
       ignoreSSL: Joi.boolean().required()
 
     }
-  }
+  },
 
+  getUrlChecksInstance: {
+    params: {
+      id: Joi.string().hex().length(24).required()
+    }
+  },
+
+  getBulkUrlsChecks: {
+    query: {
+      tags: Joi.array().items(Joi.string()).min(1).single()
+    }
+  },
+
+  deleteUrlChecksInstance: {
+    params: {
+      id: Joi.string().hex().length(24).required()
+    }
+  }
 }
