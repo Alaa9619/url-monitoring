@@ -14,4 +14,25 @@ router.post(
   urlChecksController.createUrlChecksInstance
 )
 
+router.get(
+  '/:id',
+  authenticate,
+  validate(urlChecksValidation.getUrlChecksInstance),
+  urlChecksController.getUrlChecksInstance
+)
+
+router.get(
+  '/',
+  authenticate,
+  validate(urlChecksValidation.getBulkUrlsChecks),
+  urlChecksController.getBulkUrlsChecks
+)
+
+router.delete(
+  '/:id',
+  authenticate,
+  validate(urlChecksValidation.deleteUrlChecksInstance),
+  urlChecksController.deleteUrlChecksInstance
+)
+
 export default router
