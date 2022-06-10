@@ -35,4 +35,10 @@ router.delete(
   urlChecksController.deleteUrlChecksInstance
 )
 
+router.patch(
+  '/:id',
+  authenticate,
+  validate(urlChecksValidation.updateUrlChecksInstance),
+  urlChecksController.updateUrlChecksInstance
+)
 export default router

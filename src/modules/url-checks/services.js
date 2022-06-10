@@ -1,4 +1,4 @@
-import { NOT_FOUND, UNAUTHORIZED } from 'http-status'
+import { NOT_FOUND, UNAUTHORIZED, UNPROCESSABLE_ENTITY } from 'http-status'
 import _ from 'lodash'
 import APIError from '../../../common/api-errors.js'
 import { urlChecks } from './models/index.js'
@@ -20,6 +20,9 @@ export const urlChecksServices = {
     tags = [],
     ignoreSSL
   }, { userId }) => {
+    if (timeout > interval) {
+      throw new APIError({ status: UNPROCESSABLE_ENTITY, message: 'timeout value should be smaller than the interval' })
+    }
     // non optional and have a default value
     const urlChecksInstanceCreationQuery = {
       userId,
@@ -96,13 +99,16 @@ export const urlChecksServices = {
     timeout,
     interval,
     port,
-    authentication: { username, password },
+    authentication: { username, password } = {},
     httpHeaders,
     webhook,
-    assert: { statusCode },
+    assert: { statusCode } = {},
     tags,
     ignoreSSL
   }, { userId }) => {
+    if (timeout > interval) {
+      throw new APIError({ status: UNPROCESSABLE_ENTITY, message: 'timeout value should be smaller than the interval' })
+    }
     const urlCheckInstance = await urlChecks.findOne({ _id: urlChecksInstanceId }).lean()
     if (_.isNil(urlCheckInstance)) {
       throw new APIError({ status: NOT_FOUND, message: 'No url checks with this id' })
@@ -116,11 +122,15 @@ export const urlChecksServices = {
     if (!_.isEmpty(httpHeaders)) { urlCheckInstance.httpHeaders = httpHeaders }
 
     if (!_.isNil(path)) { urlCheckInstance.path = path }
-    if (!_.isNil(port)) { urlCheckInstance.path = port }
+    if (!_.isNil(port)) { urlCheckInstance.port = port }
     if (!_.isNil(webhook)) { urlCheckInstance.webhook = webhook }
-    if (!_.isNil(username)) { urlCheckInstance.authentication.username = username }
-    if (!_.isNil(password)) { urlCheckInstance.authentication.password = password }
-    if (!_.isNil(statusCode)) { urlCheckInstance.statusCode = statusCode }
+    if (!_.isNil(username)) {
+      urlCheckInstance.authentication = { ...urlCheckInstance.authentication, username }
+    }
+    if (!_.isNil(password)) {
+      urlCheckInstance.authentication = { ...urlCheckInstance.authentication, password }
+    }
+    if (!_.isNil(statusCode)) { urlCheckInstance.assert.statusCode = statusCode }
     if (!_.isNil(name)) { urlCheckInstance.name = name }
     if (!_.isNil(url)) { urlCheckInstance.url = url }
     if (!_.isNil(threshold)) { urlCheckInstance.threshold = threshold }
@@ -129,7 +139,7 @@ export const urlChecksServices = {
     if (!_.isNil(interval)) { urlCheckInstance.interval = interval }
     if (!_.isNil(ignoreSSL)) { urlCheckInstance.ignoreSSL = ignoreSSL }
 
-    urlCheckInstance.save()
+    await urlChecks.updateOne({ _id: urlChecksInstanceId }, { ...urlCheckInstance })
     return urlCheckInstance
   }
 }

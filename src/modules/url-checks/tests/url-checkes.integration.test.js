@@ -3,7 +3,7 @@ import { createFakeAuthenticatedUser } from '../../fakers/user.js'
 import request from 'supertest'
 import { CREATED, NOT_FOUND, NO_CONTENT, OK, UNAUTHORIZED } from 'http-status'
 import app from '../../../app.js'
-import { HTTPS_PROTOCOL } from '../constants.js'
+import { HTTPS_PROTOCOL, HTTP_PROTOCOL } from '../constants.js'
 import { createFakeUrlChecksInstance } from '../../fakers/url-checks.js'
 
 describe('[INTEGRATION] Url Checks Endpoints', () => {
@@ -135,6 +135,37 @@ describe('[INTEGRATION] Url Checks Endpoints', () => {
 
       expect(res.status).toBe(OK)
       expect(res.body.length).toBe(2)
+    })
+  })
+
+  describe('PUT /url-checks/:id', () => {
+    test('It updates url check successfully', async () => {
+      const urlCheckInstance = await createFakeUrlChecksInstance({ userId: user._id })
+
+      const newBody = {
+        name: 'google',
+        url: 'https://www.Google.com',
+        protocol: HTTP_PROTOCOL,
+        path: '/find',
+        port: 3000,
+        webhook: 'https://www.google.com',
+        timeout: 7,
+        interval: 8,
+        threshold: 1,
+        assert: { statusCode: 201 },
+        httpHeaders: [{
+          Expires: 'Wed, 21 Oct 2015 07:28:00 GMT',
+          'content-type': 'application/json+protobuf'
+        }],
+        tags: ['science'],
+        ignoreSSL: false
+      }
+      const res = await request(app)
+        .patch(`/url-checks/${urlCheckInstance._id}`)
+        .set('Authorization', `JWT ${user.verificationToken}`)
+        .send(newBody)
+
+      expect(res.status).toBe(OK)
     })
   })
 })

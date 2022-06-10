@@ -48,5 +48,19 @@ export const urlChecksController = {
     } catch (error) {
       return next(error)
     }
+  },
+
+  updateUrlChecksInstance: async (req, res, next) => {
+    console.log('here')
+    const { body, user: { _id: userId }, params: { id: urlChecksInstanceId } } = req
+
+    console.log(body)
+    try {
+      const urlChecksInstance = await urlChecksServices.updateUrlChecksInstance({ ...body, urlChecksInstanceId }, { userId })
+
+      return res.status(OK).send(urlChecksInstance)
+    } catch (error) {
+      return next(error)
+    }
   }
 }
