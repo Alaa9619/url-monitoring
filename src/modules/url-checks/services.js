@@ -1,7 +1,9 @@
-import { NOT_FOUND, UNAUTHORIZED, UNPROCESSABLE_ENTITY } from 'http-status'
+import httpStatus from 'http-status'
 import _ from 'lodash'
 import APIError from '../../../common/api-errors.js'
 import { urlChecks } from './models/index.js'
+
+const { NOT_FOUND, UNAUTHORIZED, UNPROCESSABLE_ENTITY } = httpStatus
 
 export const urlChecksServices = {
   createUrlChecksInstance: async ({
